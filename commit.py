@@ -1,6 +1,7 @@
 import config
 
 from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, backref
 
 class Commit(config.BASE):
   __tablename__ = 'commits'
