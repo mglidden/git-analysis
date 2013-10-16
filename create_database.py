@@ -27,6 +27,6 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_TIME):
     committer = Author(commit.committer.name, commit.committer.email)
     session.add(committer)
 
-  session.add(Commit(commit.message, commit.commit_time, committer.email, author.email))
+  session.add(Commit(commit.message, commit.commit_time, commit.hex, committer.email, author.email))
 
 session.commit()
