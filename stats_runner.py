@@ -3,6 +3,7 @@ import basic_stats
 from commit import Commit
 import common
 
+import pylab
 import sqlalchemy
 
 session = common.Session()
@@ -15,7 +16,11 @@ def _print_histogram(histogram):
   histogram_counts.sort(key=lambda key: key[0])
   print histogram_counts
 
-print 'Map of number->number of authors with that many committed changes:'
-_print_histogram(basic_stats.committer_frequency_histogram(session))
-print 'Map of number->number of authors with that many authored changes:'
-_print_histogram(basic_stats.author_frequency_histogram(session))
+commit_counts = [count[0] for count in session.query(sqlalchemy.func.count(Commit.committer_email)).group_by(Commit.committer_email).all()]
+author_counts = [count[0] for count in session.query(sqlalchemy.func.count(Commit.author_email)).group_by(Commit.author_email).all()]
+
+pylab.hist([commit_counts, author_counts], 50, histtype='bar', color=['blue', 'yellow'], label=['Commit Counts', 'Authorship Counts'])
+pylab.xlabel('Number of changes')
+pylab.ylabel('Number of authors')
+pylab.legend()
+pylab.show()
