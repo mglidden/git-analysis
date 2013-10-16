@@ -1,10 +1,10 @@
 from commit import Commit
-import config
+import common
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, backref
 
-class Author(config.BASE):
+class Author(common.Base):
   __tablename__ = 'authors'
 
   id = Column(Integer, primary_key=True)

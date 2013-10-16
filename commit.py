@@ -1,9 +1,9 @@
-import config
+import common
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, backref
 
-class Commit(config.BASE):
+class Commit(common.Base):
   __tablename__ = 'commits'
 
   id = Column(Integer, primary_key=True)

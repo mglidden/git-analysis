@@ -1,5 +1,6 @@
 from author import Author
 from commit import Commit
+import common
 import config
 
 import os
@@ -10,11 +11,9 @@ import sqlalchemy
 if config.RESET_DB and os.path.exists(config.DB_PATH):
   os.remove(config.DB_PATH)
 
-engine = sqlalchemy.create_engine(config.DB_URL, echo=False)
-config.BASE.metadata.create_all(engine)
+common.Base.metadata.create_all(common.engine)
 
-Session = sqlalchemy.orm.sessionmaker(bind=engine)
-session = Session()
+session = common.Session()
 
 repo = pygit2.Repository(config.REPO_PATH)
 for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_TIME):
