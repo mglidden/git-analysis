@@ -1,5 +1,6 @@
 from author import Author
 from commit import Commit
+from patch import Patch
 import common
 import config
 
@@ -27,6 +28,14 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_TIME):
     committer = Author(commit.committer.name, commit.committer.email)
     session.add(committer)
 
-  session.add(Commit(commit.message, commit.commit_time, commit.hex, committer.email, author.email))
+  diff = ''
+  if len(commit.parents) > 0:
+    try:
+      diff = commit.tree.diff_to_tree(commit.parents[0].tree).patch
+    except Exception:
+      print 'error'
+  else:
+    print 'no parents'
+  session.add(Commit(commit.message, commit.commit_time, commit.hex, diff, committer.email, author.email))
 
 session.commit()

@@ -19,7 +19,8 @@ def _print_histogram(histogram):
 commit_counts = [count[0] for count in session.query(sqlalchemy.func.count(Commit.committer_email)).group_by(Commit.committer_email).all()]
 author_counts = [count[0] for count in session.query(sqlalchemy.func.count(Commit.author_email)).group_by(Commit.author_email).all()]
 
-pylab.hist([commit_counts, author_counts], 50, histtype='bar', color=['blue', 'yellow'], label=['Commit Counts', 'Authorship Counts'])
+pylab.hist([author_counts], 50, histtype='bar', color=['yellow'], label=['Authorship Counts'])
+#pylab.hist([commit_counts, author_counts], 50, histtype='bar', color=['blue', 'yellow'], label=['Commit Counts', 'Authorship Counts'])
 pylab.xlabel('Number of changes')
 pylab.ylabel('Number of authors')
 pylab.legend()
