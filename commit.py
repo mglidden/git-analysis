@@ -2,7 +2,7 @@ import common
 from parent_relationship import parent_relationship_table
 from patch import Patch
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, backref, relation
 
 class Commit(common.Base):
@@ -12,6 +12,7 @@ class Commit(common.Base):
   message = Column(String)
   time = Column(Integer)
   hash = Column(String, index=True, unique=True)
+  is_merge = Column(Boolean)
   patch_id = Column(Integer, ForeignKey('patches.id'))
   patch = relationship('Patch', backref='commit')
   committer_email = Column(String, ForeignKey('authors.email'))
@@ -21,11 +22,12 @@ class Commit(common.Base):
       secondaryjoin=parent_relationship_table.c.parent_hash==hash,
       backref='children')
 
-  def __init__(self, message, time, hash, diff, committer_email, author_email):
+  def __init__(self, message, time, hash, is_merge, patch, committer_email, author_email):
     self.message = message
     self.time = time
     self.hash = hash
-    self.patch = Patch(diff)
+    self.is_merge = is_merge
+    self.patch = patch
     self.committer_email = committer_email
     self.author_email = author_email
 

@@ -31,28 +31,35 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
     committer = Author(commit.committer.name, commit.committer.email)
     session.add(committer)
 
-  diff = ''
+  patch = None
   if len(commit.parents) > 0:
     try:
       # If a commit has multiple parents, it's a merge commit. pygit2 appears to put the merged commit last, so we'll take that. TODO: find a commit with > 2 parents and make sure everything works out
-      diff = commit.tree.diff_to_tree(commit.parents[-1].tree).patch
+      diff = commit.tree.diff_to_tree(commit.parents[-1].tree)
+
+      lines_added = 0
+      lines_removed = 0
+      files_changed = 0
+      for patch in diff:
+        files_changed += 1
+        for hunk in patch.hunks:
+          if hunk.new_lines > hunk.old_lines:
+            lines_added += (hunk.new_lines - hunk.old_lines)
+          else:
+            lines_removed += (hunk.old_lines - hunk.new_lines)
+
+      patch = Patch(diff.patch, lines_added, lines_removed, files_changed)
     except pygit2.GitError as e:
       print e
   else:
     print 'no parents'
-  session.add(Commit(commit.message, commit.commit_time, commit.hex, diff, committer.email, author.email))
-  #sqlCommit = Commit(commit.message, commit.commit_time, commit.hex, diff, committer.email, author.email)
-  #sqlCommit.parents.extend([c.hex for c in commit.parents])
+  # TODO: are merge commits the only commits with > 1 parent?
+  session.add(Commit(commit.message, commit.commit_time, commit.hex, len(commit.parents) > 1, patch, committer.email, author.email))
   for parent_commit in commit.parents:
     session.execute(parent_relationship_table.insert().values(child_hash=commit.hex, parent_hash=parent_commit.hex))
-
 
   count += 1
   if count % 100 == 0:
     print count
-
-  print commit.hex, len(commit.parents), '-'.join([c.hex for c in commit.parents])
-  if count == 10:
-    break
 
 session.commit()
