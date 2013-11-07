@@ -35,6 +35,7 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
   if len(commit.parents) > 0:
     try:
       # If a commit has multiple parents, it's a merge commit. pygit2 appears to put the merged commit last, so we'll take that. TODO: find a commit with > 2 parents and make sure everything works out
+      # TODO: This sometimes throws a GitError - "Object not found – no matching loose object"
       diff = commit.tree.diff_to_tree(commit.parents[-1].tree)
 
       lines_added = 0
@@ -43,10 +44,11 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
       for patch in diff:
         files_changed += 1
         for hunk in patch.hunks:
-          if hunk.new_lines > hunk.old_lines:
-            lines_added += (hunk.new_lines - hunk.old_lines)
-          else:
-            lines_removed += (hunk.old_lines - hunk.new_lines)
+          for line in hunk.lines:
+            if line[0] == '-':
+              lines_removed += 1
+            elif line[0] == '+':
+              lines_added += 1
 
       patch = Patch(diff.patch, lines_added, lines_removed, files_changed)
     except pygit2.GitError as e:
