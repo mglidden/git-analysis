@@ -37,3 +37,5 @@ nosetests.xml
 
 *.sqlite
 *.sqlite-journal
+
+.DS_Store
