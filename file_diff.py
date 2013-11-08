@@ -17,5 +17,11 @@ class FileDiff(common.Base):
     self.old_file_path = unicode(old_file_path, 'utf-8')
     self.new_file_path = unicode(new_file_path, 'utf-8')
 
+  def lines_added(self):
+    return sum([hunk.lines_added for hunk in self.hunks])
+
+  def lines_removed(self):
+    return sum([hunk.lines_removed for hunk in self.hunks])
+
   def __repr__(self):
-    return '<FileDiff(%s, %, %s)>' % (self.id, self.old_file_path, self.new_file_path)
+    return '<FileDiff(%s, %s, %s)>' % (self.id, self.old_file_path, self.new_file_path)

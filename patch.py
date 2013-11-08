@@ -8,15 +8,17 @@ class Patch(common.Base):
 
   id = Column(Integer, primary_key=True)
   diff = Column(String)
-  lines_added = Column(Integer)
-  lines_removed = Column(Integer)
   files_changed = Column(Integer)
 
-  def __init__(self, diff='', lines_added=-1, lines_removed=-1, files_changed=-1):
+  def __init__(self, diff='', files_changed=-1):
     self.diff = diff
-    self.lines_added = lines_added
-    self.lines_removed = lines_removed
     self.files_changed = files_changed
+
+  def lines_added(self):
+    return sum([diff.lines_added() for diff in self.file_diffs])
+
+  def lines_removed(self):
+    return sum([diff.lines_removed() for diff in self.file_diffs])
 
   def __repr__(self):
     return '<Patch(%s)>' % (self.id)
