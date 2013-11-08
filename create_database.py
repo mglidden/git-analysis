@@ -35,7 +35,7 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
   if len(commit.parents) > 0:
     try:
       # If a commit has multiple parents, it's a merge commit. pygit2 appears to put the merged commit last, so we'll take that. TODO: find a commit with > 2 parents and make sure everything works out
-      # TODO: This sometimes throws a GitError - "Object not found – no matching loose object"
+      # TODO: This sometimes throws a GitError - "Object not found - no matching loose object"
       diff = commit.tree.diff_to_tree(commit.parents[-1].tree)
 
       lines_added = 0
