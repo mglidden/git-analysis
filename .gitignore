@@ -39,3 +39,5 @@ nosetests.xml
 *.sqlite-journal
 
 .DS_Store
+
+*.csv
