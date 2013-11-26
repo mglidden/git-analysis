@@ -30,6 +30,11 @@ random.shuffle(iteration_order)
 training_data = []
 testing_data = []
 
+training_file = open(config.TRAINING_DATA_PATH, 'w')
+training_writer = csv.writer(training_file)
+testing_file = open(config.TESTING_DATA_PATH, 'w')
+testing_writer = csv.writer(testing_file)
+
 def classifyCommit(session, commit_id):
   commit = session.query(Commit).filter(Commit.id == commit_id).first()
   print 'ID:\t\t%s' % commit.id
@@ -54,20 +59,16 @@ def classifyCommit(session, commit_id):
 i = 1
 for index in iteration_order:
   if i <= num_train:
-    training_data.append(classifyCommit(session, index))
+    training_writer.writerow(classifyCommit(session, index))
+    training_file.flush()
   elif i <= num_train + num_test:
-    testing_data.append(classifyCommit(session, index))
+    testing_writer.writerow(classifyCommit(session, index))
+    testing_file.flush()
   else:
     break
 
   i += 1
 
-training_file = open(config.TRAINING_DATA_PATH, 'w')
-training_writer = csv.writer(training_file)
-training_writer.writerows(training_data)
 training_file.close()
 
-testing_file = open(config.TESTING_DATA_PATH, 'w')
-testing_writer = csv.writer(testing_file)
-testing_writer.writerows(testing_data)
 testing_file.close()
