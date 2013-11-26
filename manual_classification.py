@@ -32,14 +32,15 @@ testing_data = []
 
 def classifyCommit(session, commit_id):
   commit = session.query(Commit).filter(Commit.id == commit_id).first()
-  print commit.id
-  print commit.hash
-  print commit.is_merge
-  print commit.message
-  print commit.patch.files_changed
-  print commit.patch.lines_added()
-  print commit.patch.lines_removed()
-
+  print 'ID:\t\t%s' % commit.id
+  print 'Hash:\t\t%s' % commit.hash
+  print 'Is merge:\t%s' % commit.is_merge
+  print 'Message:\t%s' % commit.message.replace('\n', '  ')
+  print 'Lines added:\t%s' % commit.patch.lines_removed()
+  print 'Lines removed:\t%s' % commit.patch.lines_added()
+  print 'Files changed:'
+  for file_diff in commit.patch.file_diffs:
+    print '\t%s, +%s, -%s' % (file_diff.new_file_path, file_diff.lines_removed(), file_diff.lines_added())
 
   classification_number = None
   while not classification_number:
@@ -47,6 +48,7 @@ def classifyCommit(session, commit_id):
       classification_number = int(raw_input('Enter classification number for commit %s: ' % (commit_id)))
     except:
       print 'Enter an int for the classification number.'
+  print
   return (classification_number, commit_id)
 
 i = 1

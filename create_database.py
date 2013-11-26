@@ -51,9 +51,9 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
           hunk_lines_added = 0
           hunk_lines_removed = 0
           for line in hunk.lines:
-            if line[0] == '-':
+            if line[0] == '+':
               hunk_lines_removed += 1
-            elif line[0] == '+':
+            elif line[0] == '-':
               hunk_lines_added += 1
           hunk = Hunk(hunk_lines_added, hunk_lines_removed)
           hunk.file_diff = file_diff
