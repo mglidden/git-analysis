@@ -30,9 +30,9 @@ random.shuffle(iteration_order)
 training_data = []
 testing_data = []
 
-training_file = open(config.TRAINING_DATA_PATH, 'w')
+training_file = open(config.TRAINING_DATA_PATH, 'a')
 training_writer = csv.writer(training_file)
-testing_file = open(config.TESTING_DATA_PATH, 'w')
+testing_file = open(config.TESTING_DATA_PATH, 'a')
 testing_writer = csv.writer(testing_file)
 
 def classifyCommit(session, commit_id):
@@ -41,11 +41,12 @@ def classifyCommit(session, commit_id):
   print 'Hash:\t\t%s' % commit.hash
   print 'Is merge:\t%s' % commit.is_merge
   print 'Message:\t%s' % commit.message.replace('\n', '  ')
-  print 'Lines added:\t%s' % commit.patch.lines_removed()
-  print 'Lines removed:\t%s' % commit.patch.lines_added()
-  print 'Files changed:'
-  for file_diff in commit.patch.file_diffs:
-    print '\t%s, +%s, -%s' % (file_diff.new_file_path, file_diff.lines_removed(), file_diff.lines_added())
+  if commit.patch:
+    print 'Lines added:\t%s' % commit.patch.lines_removed()
+    print 'Lines removed:\t%s' % commit.patch.lines_added()
+    print 'Files changed:'
+    for file_diff in commit.patch.file_diffs:
+      print '\t%s, +%s, -%s' % (file_diff.new_file_path, file_diff.lines_removed(), file_diff.lines_added())
 
   classification_number = None
   while not classification_number:
