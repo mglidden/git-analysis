@@ -9,7 +9,7 @@ class FileDiff(common.Base):
   id = Column(Integer, primary_key=True)
   new_file_path = Column(String)
   old_file_path = Column(String)
-  patch_id = Column(Integer, ForeignKey('patches.id'))
+  patch_id = Column(Integer, ForeignKey('patches.id'), index=True)
   patch = relationship('Patch', backref='file_diffs')
 
   def __init__(self, old_file_path, new_file_path):
