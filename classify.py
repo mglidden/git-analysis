@@ -4,7 +4,7 @@ import config
 from file_diff import FileDiff
 from hunk import Hunk
 
-from collections import Counter
+from collections import Counter, defaultdict
 import csv
 from sklearn import svm
 import string
@@ -56,12 +56,11 @@ feature_creators = [is_merge, files_modified, lines_added, lines_removed]
 def create_features(commit):
   return [feature_creator(commit) for feature_creator in feature_creators] + word_features(commit)
 
+
 print 'Creating training features'
 for classification, commit_id in training_samples:
   training_features.append(create_features(session.query(Commit).filter(Commit.id == commit_id).first()))
   training_classifications.append(classification)
-
-print training_features
 
 
 print 'Training SVC'
@@ -78,15 +77,25 @@ for classification, commit_id in testing_reader:
   testing_features.append(create_features(session.query(Commit).filter(Commit.id == commit_id).first()))
   testing_truth_classifications.append(classification)
 
-print 'Classifying the testing features.'
-correct = 0
-incorrect = 0
-testing_guess_classifications = clf.predict(testing_features)
-for truth, guess in zip(testing_truth_classifications, testing_guess_classifications):
-  if truth == guess:
-    correct += 1
-  else:
-    incorrect += 1
+def classify_and_grade(features, truth, classifier):
+  correct = 0
+  incorrect = 0
+  predictions = classifier.predict(features)
+  score_per_score = defaultdict(lambda: (0, 0));
 
-print correct
-print incorrect
+  for truth, guess in zip(truth, predictions):
+    if truth == guess:
+      correct += 1
+      defaultdict[truth][0] += 1
+    else:
+      incorrect += 1
+      defaultdict[truth][1] += 1
+  return (correct, incorrect, score_per_class)
+
+
+print 'Classifying the testing features.'
+print classify_and_grade(testing_features, testing_truth_classifications, clf)
+
+
+print 'Classifying the training features.'
+print classify_and_grade(training_features, training_classifications, clf)
