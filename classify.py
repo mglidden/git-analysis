@@ -15,7 +15,7 @@ import string
 session = common.Session()
 
 
-should_remove_tweaks = False
+should_remove_tweaks = True
 def remove_tweaks(samples):
   return map(lambda (feature, commit_id): (min(6, int(feature)), commit_id), samples)
 
@@ -93,19 +93,18 @@ for classification, commit_id in training_samples:
 
 
 print 'Training SVC'
-do_grid_search = True
+do_grid_search = False
 if do_grid_search:
-  C_range = 2.0 ** np.arange(-2, 20)
-  C_range = np.arange(0, 4000, 250)
+  C_range = np.arange(1, 4000, 250)
   gamma_range = 10 ** np.arange(-5, 4)
   param_grid = dict(gamma=gamma_range, C=C_range)
-  cv = StratifiedKFold(y=training_classifications, n_folds = 3)
+  cv = StratifiedKFold(y=training_classifications, n_folds=3)
   grid = GridSearchCV(svm.SVC(class_weight='auto'), param_grid=param_grid, cv=cv)
   grid.fit(training_features, training_classifications)
   clf = grid.best_estimator_
   print clf
 else:
-  clf = svm.SVC(C=1500)
+  clf = svm.SVC(class_weight='auto', C=250, gamma=0.0)
   clf.fit(training_features, training_classifications)
 
 
@@ -137,7 +136,7 @@ def pretty_print_results(results):
   print 'Correct: %s\nIncorrect: %s\nPrecent: %s' % (correct, incorrect, correct / float(correct + incorrect))
   for classname in sorted(score_per_class.keys()):
     class_results = score_per_class[classname]
-    print '%s: %s/%s %s' % (classname, class_results[True], class_results[True] + class_results[False], class_results['distribution'])
+    print '%s: %s/%s %s' % (classname, class_results[True], class_results[True] + class_results[False], dict(class_results['distribution']))
   print ''
 
 
