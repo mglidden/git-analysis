@@ -48,12 +48,12 @@ def files_modified(commit):
 def lines_added(commit):
   if not commit.patch:
     return 0
-  return min(1.0, commit.patch.lines_removed() / 1000.0)
+  return min(1.0, commit.patch.lines_removed() / 500.0)
 
 def lines_removed(commit):
   if not commit.patch:
     return 0
-  return min(1.0, commit.patch.lines_added() / 1000.0)
+  return min(1.0, commit.patch.lines_added() / 500.0)
 
 def lines_ratio(commit):
   if not commit.patch or commit.patch.lines_added() + commit.patch.lines_removed() == 0:
