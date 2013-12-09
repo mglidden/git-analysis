@@ -1,6 +1,6 @@
-REPO_PATH = '../edx-platform'
+REPO_PATH = '../../edx-platform'
 
-DB_PATH = 'edx-platform.sqlite'
+DB_PATH = '../edx-platform.sqlite'
 DB_TYPE = 'sqlite:///'
 DB_URL = DB_TYPE + DB_PATH
 

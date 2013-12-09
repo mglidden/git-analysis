@@ -1,3 +1,4 @@
+from author import Author
 from commit import Commit
 import common
 import config
@@ -44,16 +45,15 @@ def files_modified(commit):
     return 0
   return min(1.0, commit.patch.files_changed / 25.0)
 
-# TODO: when I fix the lines removed / added bug, change these to be correct
 def lines_added(commit):
   if not commit.patch:
     return 0
-  return min(1.0, commit.patch.lines_removed() / 500.0)
+  return min(1.0, commit.patch.lines_added() / 500.0)
 
 def lines_removed(commit):
   if not commit.patch:
     return 0
-  return min(1.0, commit.patch.lines_added() / 500.0)
+  return min(1.0, commit.patch.lines_removed() / 500.0)
 
 def lines_ratio(commit):
   if not commit.patch or commit.patch.lines_added() + commit.patch.lines_removed() == 0:
@@ -146,3 +146,16 @@ pretty_print_results(classify_and_grade(testing_features, testing_truth_classifi
 
 print 'Classifying the training features.'
 pretty_print_results(classify_and_grade(training_features, training_classifications, clf))
+
+
+should_classify_all_commits = True
+if should_classify_all_commits:
+  print 'Classifying all commits.'
+  count = 0
+  for commit in session.query(Commit).all():
+    commit.classification = int(clf.predict([create_features(commit)])[0])
+    session.add(commit)
+    count += 1
+    if count % 1000 == 0:
+      print count
+  session.commit()

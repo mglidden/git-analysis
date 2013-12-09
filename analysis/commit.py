@@ -15,8 +15,9 @@ class Commit(common.Base):
   is_merge = Column(Boolean)
   patch_id = Column(Integer, ForeignKey('patches.id'))
   patch = relationship('Patch', backref='commit')
-  committer_email = Column(String, ForeignKey('authors.email'))
-  author_email = Column(String, ForeignKey('authors.email'))
+  committer_email = Column(String, ForeignKey('authors.email'), index=True)
+  author_email = Column(String, ForeignKey('authors.email'), index=True)
+  classification = Column(Integer, index=True, default=-1)
   parents = relation('Commit', secondary=parent_relationship_table,
       primaryjoin=parent_relationship_table.c.child_hash==hash,
       secondaryjoin=parent_relationship_table.c.parent_hash==hash,
