@@ -2,18 +2,15 @@ import fix_paths
 
 import common
 
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask('GitAnalysis')
+app.debug = True
 session = common.Session()
-
-@app.teardown_appcontext
-def teardown(error):
-  session.close()
 
 @app.route('/')
 def main_page():
-  return 'root'
+  return render_template('layout.html')
 
 if __name__ == '__main__':
   app.run()
