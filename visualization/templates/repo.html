@@ -1,6 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
-{% for author in authors %}
-  {% include 'author.html' %}
-{% endfor %}
+
+<div id='authors'>
+  {% for author in authors %}
+    {% include 'author.html' %}
+  {% endfor %}
+</div>
+
+{% include 'streamgraph.html' %}
+
 {% endblock %}
