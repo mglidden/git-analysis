@@ -64,7 +64,8 @@ def clean_or_refactor_in_message(commit):
   return 'clean' in commit.message.lower() or 'refactor' in commit.message.lower()
 
 def get_words_from_message(commit_message):
-  cleaned_message = str(commit_message.replace('\n', ' ')).translate(string.maketrans('', ''), string.punctuation + '\t').lower()
+  #TODO: clean up this method
+  cleaned_message = str(commit_message.encode('ascii', 'ignore').replace('\n', ' ')).translate(string.maketrans('', ''), string.punctuation + '\t').lower()
   return set(cleaned_message.split(' '))
 
 word_frequencies = Counter()
