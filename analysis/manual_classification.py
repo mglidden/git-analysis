@@ -1,8 +1,10 @@
-from commit import Commit
+import fix_paths
+
+from models.commit import Commit
 import common
 import config
-from file_diff import FileDiff
-from hunk import Hunk
+from models.file_diff import FileDiff
+from models.hunk import Hunk
 
 import csv
 import random

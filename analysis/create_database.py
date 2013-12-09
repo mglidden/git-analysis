@@ -1,9 +1,11 @@
-from author import Author
-from commit import Commit
-from file_diff import FileDiff
-from hunk import Hunk
-from parent_relationship import parent_relationship_table
-from patch import Patch
+import fix_paths
+
+from models.author import Author
+from models.commit import Commit
+from models.file_diff import FileDiff
+from models.hunk import Hunk
+from models.parent_relationship import parent_relationship_table
+from models.patch import Patch
 import common
 import config
 

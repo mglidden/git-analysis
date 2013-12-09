@@ -1,3 +1,5 @@
+import fix_paths
+
 import common
 
 from sqlalchemy import Column, ForeignKey, Integer, String

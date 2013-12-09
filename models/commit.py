@@ -1,3 +1,5 @@
+import fix_paths
+
 import common
 from parent_relationship import parent_relationship_table
 from patch import Patch

@@ -1,3 +1,5 @@
+import fix_paths
+
 from commit import Commit
 import common
 

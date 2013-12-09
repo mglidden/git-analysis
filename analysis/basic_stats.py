@@ -1,4 +1,6 @@
-from commit import Commit
+import fix_paths
+
+from models.commit import Commit
 import common
 
 from collections import defaultdict

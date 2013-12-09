@@ -1,10 +1,12 @@
-from author import Author
+import fix_paths
+
+from models.author import Author
 import basic_stats
-from commit import Commit
+from models.commit import Commit
 import common
-from file_diff import FileDiff
-from hunk import Hunk
-from patch import Patch
+from models.file_diff import FileDiff
+from models.hunk import Hunk
+from models.patch import Patch
 
 from collections import Counter, defaultdict
 import pylab
