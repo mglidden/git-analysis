@@ -8,6 +8,9 @@
 </head>
 <body>
   {% include 'header.html' %}
+  <div class='container'>
+    {% block body %}{% endblock %}
+  </div>
   <script type='text/javascript' src='/static/js/jquery-1.10.2.js'></script>
   <script type='text/javascript' src='/static/js/bootstrap.js'></script>
   <script type='text/javascript' src='/static/js/underscore.js'></script>
