@@ -11,7 +11,7 @@ d3.json('/repo_classification.json', function(data) {
                  .clipEdge(true);
  
     chart.xAxis
-         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d*1000)) });
+         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
  
     chart.yAxis
          .tickFormat(d3.format(',.2f'));
