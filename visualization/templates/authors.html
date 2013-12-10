@@ -1,4 +1,5 @@
 <div id='authors' class='span3'>
+  <div id='authors-back' style='display:none' onclick='openRepo()'><img id='authors-back-icon' src='/static/img/glyphicons/glyphicons_224_chevron-left.png'/>Back</div>
   {% for author in authors %}
     {% include 'author.html' %}
   {% endfor %}

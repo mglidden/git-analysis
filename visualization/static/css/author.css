@@ -3,6 +3,18 @@
   overflow-y: scroll;
 }
 
+#authors-back {
+  cursor: pointer;
+  font-size: 15pt;
+  margin: 0 0 7px 7px;
+}
+
+#authors-back-icon {
+  height: 18px;
+  margin: 0 2px 5px 0;
+  width: 10px;
+}
+
 .author {
   border-color: #aaa;
   border-style: solid;
