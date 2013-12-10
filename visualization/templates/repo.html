@@ -1,12 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<div id='authors' class='span3'>
-  {% for author in authors %}
-    {% include 'author.html' %}
-  {% endfor %}
+<div class='row'>
+  {% include 'authors.html' %}
+  {% include 'stacked_graph.html' %}
 </div>
-
-{% include 'stacked_graph.html' %}
 
 {% endblock %}

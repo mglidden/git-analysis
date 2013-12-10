@@ -2,3 +2,8 @@ body {
   padding-bottom: 60px;
   padding-top: 60px;
 }
+
+.chart {
+  height:500px;
+  width: 800px;
+}

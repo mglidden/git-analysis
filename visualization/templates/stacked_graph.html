@@ -1,5 +1,5 @@
-<div id='chart'>
-  <svg></svg>
+<div id='stacked-chart'>
+  <svg class='chart'></svg>
 </div>
 
 <script>
@@ -16,7 +16,7 @@ d3.json('/repo_classification.json', function(data) {
     chart.yAxis
          .tickFormat(d3.format(',.2f'));
  
-    d3.select('#chart svg')
+    d3.select('#stacked-chart svg')
       .datum(data)
       .transition().duration(500).call(chart);
  
