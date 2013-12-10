@@ -5,24 +5,25 @@
 <script>
 d3.json('/repo_classification.json', function(data) {
  nv.addGraph(function() {
-   var chart = nv.models.stackedAreaChart()
+   // TODO: hack. get rid of this global variable.
+   stackedChart = nv.models.stackedAreaChart()
                  .x(function(d) { return d[0] })
                  .y(function(d) { return d[1] })
                  .clipEdge(true);
  
-    chart.xAxis
+    stackedChart.xAxis
          .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
  
-    chart.yAxis
+    stackedChart.yAxis
          .tickFormat(d3.format(''));
  
     d3.select('#stacked-chart svg')
       .datum(data)
-      .transition().duration(500).call(chart);
+      .transition().duration(500).call(stackedChart);
  
-    nv.utils.windowResize(chart.update);
+    nv.utils.windowResize(stackedChart.update);
 
-    return chart;
+    return stackedChart;
   });
 })
 </script>
