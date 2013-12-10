@@ -3,9 +3,10 @@
 
 <div id='authors'>
   {% for author in authors %}
+    {% include 'author.html' %}
   {% endfor %}
 </div>
 
-{% include 'stacked_graph_example.html' %}
+{% include 'stacked_graph.html' %}
 
 {% endblock %}
