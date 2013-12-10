@@ -1,5 +1,5 @@
-<div>
-  <svg id='chart'></svg>
+<div id='chart'>
+  <svg></svg>
 </div>
 
 <script>
@@ -16,7 +16,7 @@ d3.json('/repo_classification.json', function(data) {
     chart.yAxis
          .tickFormat(d3.format(',.2f'));
  
-    d3.select('#chart')
+    d3.select('#chart svg')
       .datum(data)
       .transition().duration(500).call(chart);
  
@@ -25,4 +25,4 @@ d3.json('/repo_classification.json', function(data) {
     return chart;
   });
 })
- </script>
+</script>

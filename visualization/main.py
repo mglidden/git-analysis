@@ -41,7 +41,7 @@ def repo_classification():
 
   layers = defaultdict(list)
   for week, data in sorted(data_by_week.iteritems(), key=lambda val: val[0]):
-    date = week * seconds_in_week
+    date = week * seconds_in_week * 1000;
     for classification, count in data.iteritems():
       layers[classification].append((date, count))
 
