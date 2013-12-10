@@ -18,23 +18,42 @@ session = common.Session()
 def main_page():
   authors = session.query(Author).join(Author.commits).group_by(Author.email).order_by(func.count(Author.commits).desc())
 
-  commit_classifications = session.query(Commit.classification, Commit.time).order_by(Commit.time)
-  data_by_week = []
-  current_week = -1
+  return render_template('repo.html', authors=authors)
+
+def _name_for_classification(classification):
+  if classification == 2:
+    return 'Bugfix'
+  elif classification == 3:
+    return 'Cleanup / Refactor'
+  elif classification == 5:
+    return 'Merge'
+  elif classification == 6:
+    return 'Feature'
+
+@app.route('/repo_classification.json')
+def repo_classification():
+  commit_classifications = session.query(Commit.classification, Commit.time)
+  data_by_week = defaultdict(lambda: {2:0, 3:0, 5:0, 6:0})
+  seconds_in_week = 7 * 24 * 60 * 60
   for classification, time in commit_classifications:
-    calendar = datetime.fromtimestamp(time).isocalendar()
-    weeknum = calendar[0]*52 + calendar[1]
-    if weeknum != current_week:
-      data_by_week.append({2:0, 3:0, 5:0, 6:0})
-      current_week = weeknum
-    data_by_week[-1][classification] += 1
+    weeknum = time / seconds_in_week
+    data_by_week[weeknum][classification] += 1
 
   layers = defaultdict(list)
-  for week, data in zip(range(0, len(data_by_week)), data_by_week):
+  for week, data in sorted(data_by_week.iteritems(), key=lambda val: val[0]):
+    date = week * seconds_in_week
     for classification, count in data.iteritems():
-      layers[classification].append({'x': week, 'y': count})
+      layers[classification].append((date, count))
 
-  return render_template('repo.html', authors=authors, layers=json.dumps(layers.values()))
+  out = []
+  for classification, data in layers.iteritems():
+    out.append({
+      'key': _name_for_classification(classification),
+      'values': data
+    })
+
+  return json.dumps(out)
+
 
 if __name__ == '__main__':
   app.run()

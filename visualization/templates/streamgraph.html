@@ -1,8 +1,7 @@
 <script>
 //  var data = [[{x:0,y:1}, {x:2,y:4}], [{x:0,y:2}, {x:1,y:1}, {x:2,y:3}]],
-  var data = {{ layers|safe }};
-  console.log(data);
-var      stack = d3.layout.stack().offset("wiggle"),
+  var data = {{ layers|safe }},
+      stack = d3.layout.stack().offset("wiggle"),
       layers = stack(data),
       numSamples = layers[2].length;
 
@@ -18,7 +17,7 @@ var      stack = d3.layout.stack().offset("wiggle"),
       .range([height, 0]);
   
   var color = d3.scale.linear()
-      .range(["#aad", "#556"]);
+      .range(["#000", "#fff"]);
   
   var area = d3.svg.area()
       .x(function(point) { return x(point.x); })
@@ -33,5 +32,5 @@ var      stack = d3.layout.stack().offset("wiggle"),
       .data(layers)
     .enter().append('path')
       .attr('d', area)
-      .style('fill', function() { return color(Math.random()); });
+      .style('fill', function(val, b) { console.log(b); return color(Math.random()); });
 </script>
