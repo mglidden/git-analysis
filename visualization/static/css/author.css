@@ -22,7 +22,7 @@
   padding: 5px 0 7px 7px;
 }
 
-.author:hover {
+.author:hover, .author-selected {
   background-color: #ddd;
 }
 
