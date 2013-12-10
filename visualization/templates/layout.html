@@ -7,6 +7,7 @@
   <link rel='stylesheet' href='/static/css/bootstrap-responsive.css'>
   <link rel='stylesheet' type='text/css' href='/static/css/nv.d3.css'>
   <link rel='stylesheet' type='text/css' href='/static/css/application.css'>
+  <link rel='stylesheet' type='text/css' href='/static/css/author.css'>
   <script type='text/javascript' src='/static/js/jquery-1.10.2.js'></script>
   <script type='text/javascript' src='/static/js/bootstrap.js'></script>
   <script type='text/javascript' src='/static/js/underscore.js'></script>
@@ -15,7 +16,7 @@
 </head>
 <body>
   {% include 'header.html' %}
-  <div class='container'>
+  <div id='content' class='container'>
     {% block body %}{% endblock %}
   </div>
 </body>

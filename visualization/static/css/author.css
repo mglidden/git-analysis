@@ -1,0 +1,24 @@
+#authors {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.author {
+  border-color: #aaa;
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  padding: 5px 0 7px 7px;
+}
+
+.author:hover {
+  background-color: #ddd;
+}
+
+.author-name {
+  font-size: 15pt;
+}
+
+.author-commit-count {
+  color: #999;
+  font-size: 10pt;
+}
