@@ -8,3 +8,7 @@ RESET_DB = True # if True, deletes the DB every time you run create_database
 
 TRAINING_DATA_PATH = 'training_data.csv'
 TESTING_DATA_PATH = 'testing_data.csv'
+
+SERIALIZED_SVC_LOCATION = 'serialized_svc'
+
+WORD_FREQUENCY_PATH = 'word_frequency.json'

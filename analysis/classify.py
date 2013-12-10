@@ -4,12 +4,15 @@ from models.author import Author
 from models.commit import Commit
 import common
 import config
+import features
+from load_samples import load_samples_from_file
 from models.file_diff import FileDiff
 from models.hunk import Hunk
 
 from collections import Counter, defaultdict
 import csv
 import numpy as np
+import pickle
 from sklearn import svm
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.grid_search import GridSearchCV
@@ -17,83 +20,14 @@ import string
 
 session = common.Session()
 
-
-should_remove_tweaks = True
-def remove_tweaks(samples):
-  return map(lambda (feature, commit_id): (min(6, int(feature)), commit_id), samples)
-
-should_remove_unknowns = True
-def remove_unknowns(samples):
-  return filter(lambda (feature, commit_id): feature != 1, samples)
-
-def load_samples_from_file(filename):
-  samples_file = open(filename, 'r')
-  samples = list(csv.reader(samples_file))
-  samples_file.close()
-  samples = map(lambda (feature, commit_id): (int(feature), int(commit_id)), samples)
-  if should_remove_tweaks:
-    samples = remove_tweaks(samples)
-  if should_remove_unknowns:
-    samples = remove_unknowns(samples)
-  return samples
-
 training_samples = load_samples_from_file(config.TRAINING_DATA_PATH)
-
-def is_merge(commit):
-  return int(commit.is_merge)
-
-def files_modified(commit):
-  if not commit.patch:
-    return 0
-  return min(1.0, commit.patch.files_changed / 25.0)
-
-def lines_added(commit):
-  if not commit.patch:
-    return 0
-  return min(1.0, commit.patch.lines_added() / 500.0)
-
-def lines_removed(commit):
-  if not commit.patch:
-    return 0
-  return min(1.0, commit.patch.lines_removed() / 500.0)
-
-def lines_ratio(commit):
-  if not commit.patch or commit.patch.lines_added() + commit.patch.lines_removed() == 0:
-    return 0.5
-  return commit.patch.lines_added() / float(commit.patch.lines_added() + commit.patch.lines_removed())
-
-def clean_or_refactor_in_message(commit):
-  return 'clean' in commit.message.lower() or 'refactor' in commit.message.lower()
-
-def get_words_from_message(commit_message):
-  #TODO: clean up this method
-  cleaned_message = str(commit_message.encode('ascii', 'ignore').replace('\n', ' ')).translate(string.maketrans('', ''), string.punctuation + '\t').lower()
-  return set(cleaned_message.split(' '))
-
-word_frequencies = Counter()
-for _, commit_id in training_samples:
-  commit = session.query(Commit).filter(Commit.id == commit_id).first()
-  for word in get_words_from_message(commit.message):
-    word_frequencies[word] += 1
-all_words = [word for word, _ in word_frequencies.most_common(800)]
-
-def word_features(commit):
-  words = get_words_from_message(commit.message)
-  return [int(word in words) for word in all_words]
-
 training_features = []
 training_classifications = []
 
-feature_creators = [is_merge, files_modified, lines_added, lines_removed, lines_ratio, clean_or_refactor_in_message]
-def create_features(commit):
-  return [feature_creator(commit) for feature_creator in feature_creators] + word_features(commit)
-
-
 print 'Creating training features'
 for classification, commit_id in training_samples:
-  training_features.append(create_features(session.query(Commit).filter(Commit.id == commit_id).first()))
+  training_features.append(features.create_features(session.query(Commit).filter(Commit.id == commit_id).first()))
   training_classifications.append(classification)
-
 
 print 'Training SVC'
 do_grid_search = False
@@ -116,7 +50,7 @@ testing_samples = load_samples_from_file(config.TESTING_DATA_PATH)
 testing_features = []
 testing_truth_classifications = []
 for classification, commit_id in testing_samples:
-  testing_features.append(create_features(session.query(Commit).filter(Commit.id == commit_id).first()))
+  testing_features.append(features.create_features(session.query(Commit).filter(Commit.id == commit_id).first()))
   testing_truth_classifications.append(classification)
 
 def classify_and_grade(features, truth, classifier):
@@ -151,14 +85,10 @@ print 'Classifying the training features.'
 pretty_print_results(classify_and_grade(training_features, training_classifications, clf))
 
 
-should_classify_all_commits = True
-if should_classify_all_commits:
-  print 'Classifying all commits.'
-  count = 0
-  for commit in session.query(Commit).all():
-    commit.classification = int(clf.predict([create_features(commit)])[0])
-    session.add(commit)
-    count += 1
-    if count % 1000 == 0:
-      print count
-  session.commit()
+should_serialize_svc = True
+if should_serialize_svc:
+  clf_str = pickle.dumps(clf)
+
+  clf_file = open(config.SERIALIZED_SVC_LOCATION, 'w')
+  clf_file.write(clf_str)
+  clf_file.close()
