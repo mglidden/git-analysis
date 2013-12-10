@@ -30,9 +30,7 @@ def _name_for_classification(classification):
   elif classification == 6:
     return 'Feature'
 
-@app.route('/repo_classification.json')
-def repo_classification():
-  commit_classifications = session.query(Commit.classification, Commit.time)
+def _format_commits_for_stacked_graph(commit_classifications):
   data_by_week = defaultdict(lambda: {2:0, 3:0, 5:0, 6:0})
   seconds_in_week = 7 * 24 * 60 * 60
   for classification, time in commit_classifications:
@@ -51,9 +49,19 @@ def repo_classification():
       'key': _name_for_classification(classification),
       'values': data
     })
-
   return json.dumps(out)
 
+@app.route('/repo_classification.json')
+def repo_classification():
+  commit_classifications = session.query(Commit.classification, Commit.time)
+  return _format_commits_for_stacked_graph(commit_classifications)
+
+@app.route('/author_classification.json/<author_id>')
+def author_classification(author_id):
+  author_email = str(session.query(Author.email).filter(Author.id == int(author_id)).first()[0])
+  print author_email
+  authors_commits = session.query(Commit.classification, Commit.time).filter(Commit.author_email == author_email)
+  return _format_commits_for_stacked_graph(authors_commits)
 
 if __name__ == '__main__':
   app.run()
