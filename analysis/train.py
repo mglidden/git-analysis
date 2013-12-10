@@ -1,22 +1,17 @@
 import fix_paths
 
-from models.author import Author
 from models.commit import Commit
 import common
 import config
 import features
 from load_samples import load_samples_from_file
-from models.file_diff import FileDiff
-from models.hunk import Hunk
 
-from collections import Counter, defaultdict
-import csv
+from collections import defaultdict
 import numpy as np
 import pickle
 from sklearn import svm
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.grid_search import GridSearchCV
-import string
 
 session = common.Session()
 
