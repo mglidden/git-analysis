@@ -11,12 +11,11 @@ import json
 from sqlalchemy import func
 
 app = Flask('GitAnalysis')
-app.debug = True
 session = common.Session()
 
 @app.route('/')
 def main_page():
-  authors = session.query(Author).join(Author.commits).group_by(Author.email).order_by(func.count(Author.commits).desc())
+  authors = session.query(Author).join(Author.authored_commits).group_by(Author.email).order_by(func.count(Author.commits).desc())
 
   return render_template('repo.html', authors=authors)
 
@@ -64,4 +63,4 @@ def author_classification(author_id):
   return _format_commits_for_stacked_graph(authors_commits)
 
 if __name__ == '__main__':
-  app.run()
+  app.run(host='0.0.0.0')
