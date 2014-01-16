@@ -1,3 +1,4 @@
+// todo: move this method to a common JS file
 var _loadChartData = function(dataURL) {
   d3.json(dataURL, function(data) {
     d3.select('#stacked-chart svg')
