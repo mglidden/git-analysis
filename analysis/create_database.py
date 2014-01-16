@@ -82,6 +82,5 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
   count += 1
   if count % 100 == 0:
     print count
-    session.commit()
 
 session.commit()
