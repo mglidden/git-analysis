@@ -72,7 +72,7 @@ def directory_classification(file_path):
   # remove all trailing slashes to be consistent with db
   if file_path[-1] == '/':
     file_path = file_path[:-1]
-  data = session.query(Commit.classification, Commit.time).filter(File.name==file_path).join(File.file_diff).join(FileDiff.patch).join(Patch.commit).group_by(Commit.id).all()
+  data = session.query(Commit.classification, Commit.time).filter(File.name==file_path).join(File.file_diff).join(FileDiff.patch).join(Patch.commit).all()
   return _format_commits_for_stacked_graph(data)
 
 if __name__ == '__main__':
