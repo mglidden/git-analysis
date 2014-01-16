@@ -2,6 +2,9 @@ import fix_paths
 
 from models.author import Author
 from models.commit import Commit
+from models.file import File
+from models.file_diff import FileDiff
+from models.patch import Patch
 import common
 
 from collections import defaultdict
@@ -29,6 +32,7 @@ def _name_for_classification(classification):
   elif classification == 6:
     return 'Feature'
 
+# Takes a list of (classification, time stamp)
 def _format_commits_for_stacked_graph(commit_classifications):
   data_by_week = defaultdict(lambda: {2:0, 3:0, 5:0, 6:0})
   seconds_in_week = 7 * 24 * 60 * 60
@@ -62,5 +66,14 @@ def author_classification(author_id):
   authors_commits = session.query(Commit.classification, Commit.time).filter(Commit.author_email == author_email)
   return _format_commits_for_stacked_graph(authors_commits)
 
+@app.route('/directory_classification.json/<file_path>')
+def directory_classification(file_path):
+  file_path = file_path.replace('-', '/')
+  # remove all trailing slashes to be consistent with db
+  if file_path[-1] == '/':
+    file_path = file_path[:-1]
+  data = session.query(Commit.classification, Commit.time).filter(File.name==file_path).join(File.file_diff).join(FileDiff.patch).join(Patch.commit).group_by(Commit.id).all()
+  return _format_commits_for_stacked_graph(data)
+
 if __name__ == '__main__':
-  app.run(host='0.0.0.0')
+  app.run(host='0.0.0.0', debug=True)

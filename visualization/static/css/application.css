@@ -10,3 +10,8 @@ body {
   height: 100%;
   width: 800px;
 }
+
+#dir-search {
+  padding-bottom:20px;
+  padding-left:30px;
+}

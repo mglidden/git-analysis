@@ -2,6 +2,7 @@ import fix_paths
 
 from models.author import Author
 from models.commit import Commit
+from models.file import File
 from models.file_diff import FileDiff
 from models.hunk import Hunk
 from models.parent_relationship import parent_relationship_table
@@ -49,6 +50,14 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
         file_diff = FileDiff(git_file_diff.old_file_path, git_file_diff.new_file_path)
         file_diff.patch = patch
 
+        current_file_path = ''
+        for file_path_part in file_diff.new_file_path.split('/'):
+          current_file_path += file_path_part
+          new_file = File(current_file_path)
+          new_file.file_diff = file_diff
+          current_file_path += '/'
+          session.add(new_file)
+
         for hunk in git_file_diff.hunks:
           hunk_lines_added = 0
           hunk_lines_removed = 0
@@ -73,5 +82,6 @@ for commit in repo.walk(repo.head.target, pygit2.GIT_SORT_REVERSE):
   count += 1
   if count % 100 == 0:
     print count
+    session.commit()
 
 session.commit()

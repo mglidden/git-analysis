@@ -9,11 +9,9 @@ var _loadChartData = function(dataURL) {
 
 var currentAuthorId = -1;
 var openAuthor = function(authorId) {
-  console.log(authorId);
   _loadChartData('/author_classification.json/' + authorId);
 
   $('#authors-back').slideDown();
-
 
   $('#author-' + currentAuthorId).removeClass('author-selected');
   $('#author-' + authorId).addClass('author-selected');

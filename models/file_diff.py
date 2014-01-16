@@ -25,5 +25,8 @@ class FileDiff(common.Base):
   def lines_removed(self):
     return sum([hunk.lines_removed for hunk in self.hunks])
 
+  def classification(self):
+    return self.patch.commit[0].classification
+
   def __repr__(self):
     return '<FileDiff(%s, %s, %s)>' % (self.id, self.old_file_path, self.new_file_path)
